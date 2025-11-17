@@ -20,6 +20,7 @@ sys.path.append('lib')
 # Import test modules
 from test_logger import TestLogLevel, TestLogger
 from test_config import TestConfig
+from test_wifi_station import TestWiFiStatus, TestWiFiStation
 
 
 def print_banner(message: str) -> None:
@@ -51,6 +52,8 @@ def run_all_tests() -> Tuple[int, int, int]:
         ('Logger Module - LogLevel', TestLogLevel),
         ('Logger Module - Logger', TestLogger),
         ('Config Module', TestConfig),
+        ('WiFi Module - WiFiStatus', TestWiFiStatus),
+        ('WiFi Module - WiFiStation', TestWiFiStation),
     ]
 
     print("Test Modules:")

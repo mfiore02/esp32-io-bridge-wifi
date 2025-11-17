@@ -13,21 +13,30 @@ MicroPython-based firmware that provides WiFi connectivity and IO bridging funct
 
 ## Project Status
 
-**Current Phase**: Foundation Complete ✓
+**Current Phase**: WiFi Connectivity Complete ✓
 
-### Completed
+### Phase 1: Foundation ✓
 - ✓ Project structure and directory organization
 - ✓ Logger utility module with multiple log levels
 - ✓ Configuration management with JSON support
 - ✓ Boot initialization script
 - ✓ Main application entry point
 - ✓ Deployment automation script
-- ✓ Comprehensive unit test suite (53 tests, 100% passing)
+- ✓ Unit test suite (53 tests, 100% passing)
+
+### Phase 2: WiFi Connectivity ✓
+- ✓ WiFi Station mode with auto-reconnect
+- ✓ WiFi Access Point mode
+- ✓ Network status monitoring and signal strength
+- ✓ Automatic connection management
+- ✓ Integrated into main application
+- ✓ Unit test suite (32 tests, 100% passing)
+- **✓ Total: 85 tests, 100% passing**
 
 ### Next Phase
-- WiFi connectivity modules
-- IO bridge functionality
+- IO bridge functionality (GPIO control, UART bridging)
 - Web server for remote access
+- REST API for device control
 
 ## Quick Start
 
@@ -96,12 +105,14 @@ esp32-io-bridge-wifi/
 │   ├── utils/                  # Utility modules
 │   │   ├── logger.py          # Logging system ✓
 │   │   └── config.py          # Configuration management ✓
-│   ├── wifi/                   # WiFi modules (planned)
+│   ├── wifi/                   # WiFi connectivity modules
+│   │   ├── station.py         # WiFi station mode ✓
+│   │   └── access_point.py    # WiFi AP mode ✓
 │   ├── io_bridge/             # IO bridge modules (planned)
 │   └── web/                    # Web server modules (planned)
 ├── src/                        # Application code
 │   ├── boot.py                # Boot configuration ✓
-│   ├── main.py                # Application entry point ✓
+│   ├── main.py                # Application entry point with WiFi ✓
 │   └── config.json            # Configuration file ✓
 ├── tools/                      # Development tools
 │   ├── deploy.sh              # Deployment script ✓
@@ -110,6 +121,7 @@ esp32-io-bridge-wifi/
 ├── tests/                      # Unit tests
 │   ├── test_logger.py         # Logger module tests (18 tests) ✓
 │   ├── test_config.py         # Config module tests (35 tests) ✓
+│   ├── test_wifi_station.py   # WiFi station tests (32 tests) ✓
 │   └── run_all_tests.py       # Master test runner ✓
 ├── CLAUDE.md                   # AI assistant development guide
 └── README.md                   # This file
@@ -174,11 +186,22 @@ python3 tests/run_all_tests.py
 - Edge cases (invalid JSON, Unicode, special characters)
 - Data type support (strings, numbers, booleans, arrays, nested dicts)
 
+**WiFi Station Module** (32 tests):
+- WiFi status constants and state management
+- Station initialization with custom parameters
+- Connection status and error handling
+- Network information (IP, netmask, gateway, DNS)
+- Signal strength (RSSI) monitoring
+- MAC address retrieval
+- Network scanning
+- Auto-reconnect functionality
+- Edge cases (empty SSID, special characters, Unicode)
+
 #### Test Results
 
 ```
-Total Tests:   53
-Passing:       53
+Total Tests:   85
+Passing:       85
 Failures:      0
 Success Rate:  100%
 ```
@@ -207,22 +230,29 @@ Success Rate:  100%
 ## Roadmap
 
 ### Phase 1: Foundation ✓
-- Project structure and utilities
+- ✓ Project structure and directory organization
+- ✓ Logger and configuration utilities
+- ✓ Boot system and main application
+- ✓ Deployment and testing tools
 
-### Phase 2: WiFi Connectivity (Next)
-- WiFi station mode with auto-reconnect
-- Access point mode
-- Network status monitoring
+### Phase 2: WiFi Connectivity ✓
+- ✓ WiFi station mode with auto-reconnect
+- ✓ WiFi access point mode
+- ✓ Network status monitoring (IP, signal strength, connected clients)
+- ✓ Automatic connection management
+- ✓ Integrated into main application
 
-### Phase 3: IO Bridge
-- GPIO control
+### Phase 3: IO Bridge (Next)
+- GPIO control (digital I/O, PWM, ADC)
 - UART bridging
 - Communication protocol
+- I2C/SPI support
 
 ### Phase 4: Web Interface
 - Asynchronous web server
-- REST API
+- REST API for device control
 - Web-based control panel
+- WebSocket support for real-time updates
 
 ## Support
 
