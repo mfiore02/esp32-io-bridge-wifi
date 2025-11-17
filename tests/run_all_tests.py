@@ -22,6 +22,7 @@ from test_logger import TestLogLevel, TestLogger
 from test_config import TestConfig
 from test_wifi_station import TestWiFiStatus, TestWiFiStation
 from test_gpio_handler import TestPinMode, TestPullMode, TestIRQTrigger, TestGPIOHandler
+from test_mqtt_client import TestMQTTConfig, TestMQTTBridge
 
 
 def print_banner(message: str) -> None:
@@ -59,6 +60,8 @@ def run_all_tests() -> Tuple[int, int, int]:
         ('GPIO Module - PullMode', TestPullMode),
         ('GPIO Module - IRQTrigger', TestIRQTrigger),
         ('GPIO Module - GPIOHandler', TestGPIOHandler),
+        ('MQTT Module - MQTTConfig', TestMQTTConfig),
+        ('MQTT Module - MQTTBridge', TestMQTTBridge),
     ]
 
     print("Test Modules:")
