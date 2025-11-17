@@ -13,7 +13,7 @@ MicroPython-based firmware that provides WiFi connectivity and IO bridging funct
 
 ## Project Status
 
-**Current Phase**: WiFi Connectivity Complete ✓
+**Current Phase**: IO Bridge (GPIO) Complete ✓
 
 ### Phase 1: Foundation ✓
 - ✓ Project structure and directory organization
@@ -31,12 +31,23 @@ MicroPython-based firmware that provides WiFi connectivity and IO bridging funct
 - ✓ Automatic connection management
 - ✓ Integrated into main application
 - ✓ Unit test suite (32 tests, 100% passing)
-- **✓ Total: 85 tests, 100% passing**
+
+### Phase 3: IO Bridge (GPIO) ✓
+- ✓ GPIO handler with digital I/O, PWM, and ADC support
+- ✓ Hardware interrupt support with callbacks (RISING, FALLING, BOTH)
+- ✓ Pin mode management (INPUT, OUTPUT, PWM, ADC)
+- ✓ Pull resistor configuration (PULL_UP, PULL_DOWN, NONE)
+- ✓ Pin validation and safety checks
+- ✓ PWM frequency and duty cycle control
+- ✓ ADC voltage reading with calibration
+- ✓ Integrated into main application
+- ✓ Unit test suite (51 tests, 100% passing)
+- **✓ Total: 136 tests, 100% passing**
 
 ### Next Phase
-- IO bridge functionality (GPIO control, UART bridging)
 - Web server for remote access
-- REST API for device control
+- REST API for GPIO control
+- WebSocket support for real-time updates
 
 ## Quick Start
 
@@ -108,11 +119,13 @@ esp32-io-bridge-wifi/
 │   ├── wifi/                   # WiFi connectivity modules
 │   │   ├── station.py         # WiFi station mode ✓
 │   │   └── access_point.py    # WiFi AP mode ✓
-│   ├── io_bridge/             # IO bridge modules (planned)
+│   ├── io_bridge/             # IO bridge modules
+│   │   ├── __init__.py        # IO bridge package ✓
+│   │   └── gpio_handler.py    # GPIO control with interrupts ✓
 │   └── web/                    # Web server modules (planned)
 ├── src/                        # Application code
 │   ├── boot.py                # Boot configuration ✓
-│   ├── main.py                # Application entry point with WiFi ✓
+│   ├── main.py                # Application entry point with GPIO ✓
 │   └── config.json            # Configuration file ✓
 ├── tools/                      # Development tools
 │   ├── deploy.sh              # Deployment script ✓
@@ -122,6 +135,7 @@ esp32-io-bridge-wifi/
 │   ├── test_logger.py         # Logger module tests (18 tests) ✓
 │   ├── test_config.py         # Config module tests (35 tests) ✓
 │   ├── test_wifi_station.py   # WiFi station tests (32 tests) ✓
+│   ├── test_gpio_handler.py   # GPIO handler tests (51 tests) ✓
 │   └── run_all_tests.py       # Master test runner ✓
 ├── CLAUDE.md                   # AI assistant development guide
 └── README.md                   # This file
@@ -139,7 +153,7 @@ esp32-io-bridge-wifi/
 
 ### Testing
 
-The project includes a comprehensive test suite with 53 unit tests covering all Phase 1 modules.
+The project includes a comprehensive test suite with 136 unit tests covering all implemented modules.
 
 #### Run Tests Locally (Fastest)
 
@@ -197,11 +211,25 @@ python3 tests/run_all_tests.py
 - Auto-reconnect functionality
 - Edge cases (empty SSID, special characters, Unicode)
 
+**GPIO Handler Module** (51 tests):
+- Pin mode constants (INPUT, OUTPUT, PWM, ADC)
+- Pull mode constants (NONE, PULL_UP, PULL_DOWN)
+- Interrupt trigger constants (RISING, FALLING, BOTH)
+- GPIO handler initialization with custom pin lists
+- Pin validation and availability checking
+- Digital I/O operations (read, write)
+- PWM configuration (frequency, duty cycle)
+- ADC operations (raw value, voltage reading)
+- Interrupt setup with callback handlers
+- Interrupt enable/disable control
+- Pin status tracking and reporting
+- Edge cases (invalid pins, unconfigured operations)
+
 #### Test Results
 
 ```
-Total Tests:   85
-Passing:       85
+Total Tests:   136
+Passing:       136
 Failures:      0
 Success Rate:  100%
 ```
@@ -242,13 +270,14 @@ Success Rate:  100%
 - ✓ Automatic connection management
 - ✓ Integrated into main application
 
-### Phase 3: IO Bridge (Next)
-- GPIO control (digital I/O, PWM, ADC)
-- UART bridging
-- Communication protocol
-- I2C/SPI support
+### Phase 3: IO Bridge ✓
+- ✓ GPIO control (digital I/O, PWM, ADC)
+- ✓ Hardware interrupt support with callbacks
+- ✓ Pin validation and safety checks
+- ✓ Integrated into main application
+- Future: UART bridging, I2C/SPI support
 
-### Phase 4: Web Interface
+### Phase 4: Web Interface (Next)
 - Asynchronous web server
 - REST API for device control
 - Web-based control panel

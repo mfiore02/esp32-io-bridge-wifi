@@ -15,6 +15,7 @@ sys.path.append('/lib')
 from lib.utils.logger import Logger, LogLevel
 from lib.utils.config import Config
 from lib.wifi import WiFiStation, WiFiAccessPoint
+from lib.io_bridge import GPIOHandler
 
 
 def main() -> NoReturn:
@@ -120,6 +121,33 @@ def main() -> NoReturn:
         wifi_logger.error(f"WiFi initialization error: {e}")
         sys.print_exception(e)
 
+    # Initialize GPIO Handler
+    gpio_handler: Optional[GPIOHandler] = None
+    gpio_logger = Logger('GPIO', log_level)
+
+    try:
+        # Get GPIO configuration
+        gpio_enabled = config.get('gpio.enabled', True)
+
+        if gpio_enabled:
+            enabled_pins = config.get('gpio.enabled_pins', None)
+
+            if enabled_pins:
+                gpio_logger.info(f"Initializing GPIO handler with {len(enabled_pins)} enabled pins")
+                gpio_handler = GPIOHandler(allowed_pins=enabled_pins)
+                gpio_logger.info(f"GPIO handler initialized: {enabled_pins}")
+                gpio_logger.info("GPIO ready for configuration")
+            else:
+                gpio_logger.info("Initializing GPIO handler with default pins")
+                gpio_handler = GPIOHandler()
+                gpio_logger.info(f"GPIO handler initialized with {len(gpio_handler.allowed_pins)} pins")
+        else:
+            gpio_logger.info("GPIO disabled in configuration")
+
+    except Exception as e:
+        gpio_logger.error(f"GPIO initialization error: {e}")
+        sys.print_exception(e)
+
     # Main application loop
     logger.info("Entering main loop...")
     loop_count = 0
@@ -157,6 +185,11 @@ def main() -> NoReturn:
                     ap_status = wifi_ap.get_status()
                     logger.debug(f"AP: {ap_status['client_count']} clients connected")
 
+                if gpio_handler:
+                    pin_status = gpio_handler.get_all_pins_status()
+                    if pin_status:
+                        logger.debug(f"GPIO: {len(pin_status)} pins configured")
+
             # Sleep to prevent tight loop
             time.sleep(1)
 
@@ -172,6 +205,14 @@ def main() -> NoReturn:
 
     # Cleanup
     logger.info("Shutting down...")
+
+    if gpio_handler:
+        gpio_logger.info("Releasing GPIO pins")
+        pin_status = gpio_handler.get_all_pins_status()
+        for pin in pin_status.keys():
+            gpio_handler.release_pin(pin)
+        gpio_logger.info("GPIO cleanup complete")
+
     if wifi_station:
         wifi_logger.info("Disconnecting WiFi Station")
         wifi_station.disconnect()
