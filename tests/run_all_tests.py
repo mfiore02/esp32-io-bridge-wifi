@@ -21,7 +21,7 @@ sys.path.append('lib')
 from test_logger import TestLogLevel, TestLogger
 from test_config import TestConfig
 from test_wifi_station import TestWiFiStatus, TestWiFiStation
-from test_gpio_handler import TestPinMode, TestPullMode, TestGPIOHandler
+from test_gpio_handler import TestPinMode, TestPullMode, TestIRQTrigger, TestGPIOHandler
 
 
 def print_banner(message: str) -> None:
@@ -57,6 +57,7 @@ def run_all_tests() -> Tuple[int, int, int]:
         ('WiFi Module - WiFiStation', TestWiFiStation),
         ('GPIO Module - PinMode', TestPinMode),
         ('GPIO Module - PullMode', TestPullMode),
+        ('GPIO Module - IRQTrigger', TestIRQTrigger),
         ('GPIO Module - GPIOHandler', TestGPIOHandler),
     ]
 

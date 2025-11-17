@@ -1,7 +1,7 @@
 """Unit tests for the GPIO handler module.
 
-Tests the GPIOHandler, PinMode, and PullMode classes to ensure proper GPIO
-control, pin management, and state tracking.
+Tests the GPIOHandler, PinMode, PullMode, and IRQTrigger classes to ensure
+proper GPIO control, pin management, interrupt handling, and state tracking.
 
 Note: These tests validate the API and logic. Full hardware testing
 requires actual ESP32 hardware.
@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(project_root, 'lib'))
 sys.path.append('/lib')  # For MicroPython on device
 sys.path.append('lib')
 
-from lib.io_bridge.gpio_handler import GPIOHandler, PinMode, PullMode
+from lib.io_bridge.gpio_handler import GPIOHandler, PinMode, PullMode, IRQTrigger
 
 
 class TestPinMode(unittest.TestCase):
@@ -51,6 +51,21 @@ class TestPullMode(unittest.TestCase):
         """Test that pull modes are unique."""
         modes = [PullMode.NONE, PullMode.PULL_UP, PullMode.PULL_DOWN]
         self.assertEqual(len(modes), len(set(modes)))
+
+
+class TestIRQTrigger(unittest.TestCase):
+    """Test IRQTrigger constants."""
+
+    def test_irq_trigger_values(self) -> None:
+        """Test that IRQ trigger constants have correct values."""
+        self.assertEqual(IRQTrigger.RISING, 0)
+        self.assertEqual(IRQTrigger.FALLING, 1)
+        self.assertEqual(IRQTrigger.BOTH, 2)
+
+    def test_irq_trigger_unique(self) -> None:
+        """Test that IRQ triggers are unique."""
+        triggers = [IRQTrigger.RISING, IRQTrigger.FALLING, IRQTrigger.BOTH]
+        self.assertEqual(len(triggers), len(set(triggers)))
 
 
 class TestGPIOHandler(unittest.TestCase):
@@ -291,6 +306,67 @@ class TestGPIOHandler(unittest.TestCase):
         pins = GPIOHandler.ADC_PINS
         self.assertEqual(len(pins), len(set(pins)))
 
+    def test_setup_interrupt_returns_false_without_hardware(self) -> None:
+        """Test setup_interrupt returns False when hardware unavailable."""
+        gpio = GPIOHandler()
+        def handler(pin):
+            pass
+        result = gpio.setup_interrupt(4, IRQTrigger.FALLING, handler)
+        self.assertFalse(result)
+
+    def test_setup_interrupt_invalid_pin(self) -> None:
+        """Test setup_interrupt with invalid pin number."""
+        gpio = GPIOHandler(allowed_pins=[2, 4, 5])
+        def handler(pin):
+            pass
+        result = gpio.setup_interrupt(99, IRQTrigger.RISING, handler)
+        self.assertFalse(result)
+
+    def test_enable_interrupt_unconfigured_pin(self) -> None:
+        """Test enable_interrupt on unconfigured pin."""
+        gpio = GPIOHandler()
+        result = gpio.enable_interrupt(4)
+        self.assertFalse(result)
+
+    def test_disable_interrupt_unconfigured_pin(self) -> None:
+        """Test disable_interrupt on unconfigured pin."""
+        gpio = GPIOHandler()
+        result = gpio.disable_interrupt(4)
+        self.assertFalse(result)
+
+    def test_is_interrupt_enabled_unconfigured_pin(self) -> None:
+        """Test is_interrupt_enabled on unconfigured pin."""
+        gpio = GPIOHandler()
+        result = gpio.is_interrupt_enabled(4)
+        self.assertFalse(result)
+
+    def test_irq_handlers_tracked(self) -> None:
+        """Test that _irq_handlers dictionary is initialized."""
+        gpio = GPIOHandler()
+        self.assertIsInstance(gpio._irq_handlers, dict)
+        self.assertEqual(len(gpio._irq_handlers), 0)
+
+    def test_irq_enabled_tracked(self) -> None:
+        """Test that _irq_enabled dictionary is initialized."""
+        gpio = GPIOHandler()
+        self.assertIsInstance(gpio._irq_enabled, dict)
+        self.assertEqual(len(gpio._irq_enabled), 0)
+
+    def test_pin_status_includes_interrupt_info(self) -> None:
+        """Test that pin status includes interrupt information."""
+        gpio = GPIOHandler()
+        # For unconfigured pin
+        status = gpio.get_pin_status(2)
+        self.assertIsNone(status)
+        # Note: Cannot test with actual interrupt without hardware
+
+    def test_interrupt_trigger_values(self) -> None:
+        """Test interrupt trigger constant values."""
+        # Verify trigger values are defined
+        self.assertIsInstance(IRQTrigger.RISING, int)
+        self.assertIsInstance(IRQTrigger.FALLING, int)
+        self.assertIsInstance(IRQTrigger.BOTH, int)
+
 
 def run_tests() -> None:
     """Run all GPIO handler tests."""
@@ -305,6 +381,7 @@ def run_tests() -> None:
     # Add all test classes
     suite.addTests(loader.loadTestsFromTestCase(TestPinMode))
     suite.addTests(loader.loadTestsFromTestCase(TestPullMode))
+    suite.addTests(loader.loadTestsFromTestCase(TestIRQTrigger))
     suite.addTests(loader.loadTestsFromTestCase(TestGPIOHandler))
 
     # Run tests
