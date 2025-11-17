@@ -22,8 +22,9 @@ MicroPython-based firmware that provides WiFi connectivity and IO bridging funct
 - ✓ Boot initialization script
 - ✓ Main application entry point
 - ✓ Deployment automation script
+- ✓ Comprehensive unit test suite (53 tests, 100% passing)
 
-### In Progress
+### Next Phase
 - WiFi connectivity modules
 - IO bridge functionality
 - Web server for remote access
@@ -103,8 +104,13 @@ esp32-io-bridge-wifi/
 │   ├── main.py                # Application entry point ✓
 │   └── config.json            # Configuration file ✓
 ├── tools/                      # Development tools
-│   └── deploy.sh              # Deployment script ✓
-├── tests/                      # Unit tests (planned)
+│   ├── deploy.sh              # Deployment script ✓
+│   ├── test_local.sh          # Local test runner ✓
+│   └── test_on_device.sh      # Device test runner ✓
+├── tests/                      # Unit tests
+│   ├── test_logger.py         # Logger module tests (18 tests) ✓
+│   ├── test_config.py         # Config module tests (35 tests) ✓
+│   └── run_all_tests.py       # Master test runner ✓
 ├── CLAUDE.md                   # AI assistant development guide
 └── README.md                   # This file
 ```
@@ -121,9 +127,60 @@ esp32-io-bridge-wifi/
 
 ### Testing
 
+The project includes a comprehensive test suite with 53 unit tests covering all Phase 1 modules.
+
+#### Run Tests Locally (Fastest)
+
 ```bash
-# Run tests on device
-mpremote run tests/test_wifi.py
+# Run all tests locally
+./tools/test_local.sh
+
+# Run specific test file
+./tools/test_local.sh test_logger.py
+./tools/test_local.sh test_config.py
+
+# Or run directly with Python
+python3 tests/run_all_tests.py
+```
+
+#### Run Tests on ESP32 Device
+
+```bash
+# Deploy and run all tests on device
+./tools/test_on_device.sh /dev/ttyUSB0
+
+# Run specific test on device
+./tools/test_on_device.sh /dev/ttyUSB0 test_logger.py
+```
+
+#### Test Coverage
+
+**Logger Module** (18 tests):
+- Log level constants and ordering
+- Logger initialization and configuration
+- Message formatting with timestamps
+- Level filtering (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+- Multiple logger independence
+- Global and local log level settings
+- Edge cases (empty messages, special characters, long messages)
+
+**Config Module** (35 tests):
+- JSON file loading and saving
+- Dot-notation access (e.g., `config.get('wifi.ssid')`)
+- Nested value management
+- Default value handling
+- Key existence checking
+- Configuration modification and persistence
+- Edge cases (invalid JSON, Unicode, special characters)
+- Data type support (strings, numbers, booleans, arrays, nested dicts)
+
+#### Test Results
+
+```
+Total Tests:   53
+Passing:       53
+Failures:      0
+Success Rate:  100%
 ```
 
 ### Code Style
