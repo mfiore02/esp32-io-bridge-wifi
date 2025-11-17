@@ -1,0 +1,33 @@
+{
+  "wifi": {
+    "ssid": "YOUR_WIFI_SSID",
+    "password": "YOUR_WIFI_PASSWORD",
+    "mode": "station",
+    "auto_reconnect": true,
+    "max_retries": 5,
+    "timeout": 15
+  },
+  "ap": {
+    "ssid": "ESP32-IOBridge",
+    "password": "esp32bridge",
+    "channel": 11,
+    "hidden": false
+  },
+  "server": {
+    "enabled": true,
+    "port": 80,
+    "host": "0.0.0.0"
+  },
+  "logging": {
+    "level": 1,
+    "timestamp": true
+  },
+  "gpio": {
+    "enabled_pins": [2, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23],
+    "default_mode": "input"
+  },
+  "device": {
+    "name": "ESP32-IOBridge",
+    "version": "1.0.0"
+  }
+}
